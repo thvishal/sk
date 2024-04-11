@@ -7,7 +7,7 @@ import currencyFormat, {
     filterList,
     updateMeta,
     commaSeprateVal //https://dl.dropboxusercontent.com/scl/fi/epmuqvqdsne4n1nqzjous/download-pdf-home-calc-helper.js?rlkey=r459jli04xoohhb245pe0vis6&dl=0
-} from "https://dl.dropboxusercontent.com/scl/fi/epmuqvqdsne4n1nqzjous/download-pdf-home-calc-helper.js?rlkey=r459jli04xoohhb245pe0vis6&dl=0"
+} from "https://cdn.jsdelivr.net/gh/thvishal/sk/download-pdf-home-calc-helper.js"
 
 
 let currencyList = [
