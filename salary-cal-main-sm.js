@@ -1,4 +1,3 @@
-
 import currencyFormat, {
     checkDisabledBtn,
     createList,
