@@ -9,7 +9,7 @@ import currencyFormat, {
     filterList,
     updateMeta,
     commaSeprateVal
-} from "https://dl.dropboxusercontent.com/scl/fi/kvyzcbt65g7hfhltuks9x/helper_v3.js?rlkey=xgk12j5x5ldt0tvb4mp8yvrmt&dl=0"
+} from "https://cdn.jsdelivr.net/gh/thvishal/sk/helper_v3.js"
 
 //main cal helper--> https://dl.dropboxusercontent.com/scl/fi/7sbtw4irygekky5i8fxwh/helper-main.js?rlkey=lp3l9oc5711winnhx4n9gqykm&dl=0
 let currencyList = [
