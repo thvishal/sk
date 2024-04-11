@@ -7,7 +7,7 @@ import currencyFormat, {
     filterList,
     updateMeta, //https://dl.dropboxusercontent.com/scl/fi/7sbtw4irygekky5i8fxwh/helper-main.js?rlkey=lp3l9oc5711winnhx4n9gqykm&dl=0
     commaSeprateVal
-} from "https://dl.dropboxusercontent.com/scl/fi/gwacrnvzaif86sg94ec2f/helper-sm-country-calculator.js?rlkey=bcwvq2osex8o0rgegpicmhovg&dl=0"
+} from "https://cdn.jsdelivr.net/gh/thvishal/sk/helper-sm-country-calculator.js"
 
 let currencyList = [
     { label: "USD", value: "USD" },
