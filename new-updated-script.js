@@ -1,5 +1,6 @@
+// this is use for salary calculator main. url => skuad.io/salary-calculator
 
-import currencyFormat, {
+import {
     checkDisabledBtn,
     createList,
     createListCurrency,
@@ -8,6 +9,7 @@ import currencyFormat, {
     updateMeta,
     commaSeprateVal
 } from "https://cdn.jsdelivr.net/gh/thvishal/sk/new-updated-main-helper.js"
+// old helper -> https://dl.dropboxusercontent.com/scl/fi/ls6hryquf3ymagqb73lc5/new-updated-main-helper.js?rlkey=cdnhfh3wdljjzpmft1bl7sowv&dl=0
 
 let currencyList = [
     { label: "USD", value: "USD" },
@@ -196,7 +198,7 @@ const _handleSubmit = async (e) => {
     e.preventDefault();
     if (countryInput) document.getElementById("calculate-salary").innerText = "Calculating...";
     document.getElementById("calculate-salary").setAttribute("disabled", "");
-    console.log(countryList, 'll')
+    // console.log(countryList, 'll')
     const countryCd = countryList.find(
         (country) => country.label === countryInput.value
     );
@@ -212,11 +214,11 @@ const _handleSubmit = async (e) => {
     }
 
     let isExpact = true;
-    if (countryCd.isExpatApplicable){
-    isExpact = countryCd.isExpatApplicable ? document.getElementById('is-expact-no').checked || false : false
+    if (countryCd.isExpatApplicable) {
+        isExpact = countryCd.isExpatApplicable ? document.getElementById('is-expact-no').checked || false : false
     }
-    else{
-       isExpact = true; 
+    else {
+        isExpact = true;
     }
     let newUrl = baseUrl + `?client=website&countryCode=${objnew.countryCode}&currencyCode=${objnew.currencyCode}&salary=${objnew.salary}&isExpat=${isExpact}`
     // let getProvinceCode = null
@@ -232,7 +234,7 @@ const _handleSubmit = async (e) => {
         newUrl = `${newUrl}&provinceCode=${getProvinceObj.provinceCode}`
     }
 
-    console.log(getProvinceObj, 'gg')
+    // console.log(getProvinceObj, 'gg')
     // if (countryCd.isExpatApplicable) {
     //     newUrl = `${newUrl}&isExpat=${isExpact}`
     //     // console.log(isExpact, 'isExapact')
@@ -358,7 +360,7 @@ const toggleProvinceList = (e) => {
         currencyListEl.classList.add("list-modal");
         // console.log(provinceListEle, 'list model')
         // provinceListEle.classList.add("list-modal");
-        filterList(countryList, text, "country-list");
+        filterList(getProvince, text, "province-list");
         checkDisabledBtn();
     } else {
         provinceListEle.classList.remove("list-modal");
@@ -380,7 +382,7 @@ countryInput.addEventListener("blur", (e) => {
 
 const provinceListElOnClick = (e) => {
     e.preventDefault();
-    if ('Country is not found' === e.target.innerText) return;
+    if ('State is not found' === e.target.innerText) return;
     if (e.target.nodeName === "UL") return;
     provinceInput.value = e.target.innerText;
     checkDisabledBtn();
@@ -388,6 +390,7 @@ const provinceListElOnClick = (e) => {
     // toggleCountryList(e);
 };
 
+let getProvince = []
 const countryListElOnClick = (e) => {
     e.preventDefault();
     if ('Country is not found' === e.target.innerText) return;
@@ -400,16 +403,30 @@ const countryListElOnClick = (e) => {
     // console.log('click')
     const countryProvince = countryList.find(item => item.label === e.target.innerText)
     // console.log(countryProvince, 'countryProvince')
-    const getProvince = countryProvince.provinceList.map(item => ({ label: item.province, value: item.provinceCode }))
+    getProvince = countryProvince.provinceList.map(item => ({ label: item.province, value: item.provinceCode }))
     if (countryProvince.label === 'Canada') {
         provinceInput.setAttribute('placeholder', 'Province')
     } else {
         provinceInput.setAttribute('placeholder', 'State')
     }
+
+    getProvince.sort((a, b) => {
+        const labelA = a.label.toUpperCase(); // ignore upper and lowercase
+        const labelB = b.label.toUpperCase(); // ignore upper and lowercase
+
+        if (labelA < labelB) {
+            return -1; // labelA comes before labelB
+        }
+        if (labelA > labelB) {
+            return 1; // labelA comes after labelB
+        }
+        return 0; // labels are equal
+    });
+
     if (getProvince.length) {
-        // console.log(countryProvince.label, getProvince, 'ppp')
+        // console.log(getProvince, getProvince, 'ppp')
         document.getElementById('show-calc-province').style.display = 'block'
-        createList(getProvince, "province-list");
+        createList(getProvince.sort(), "province-list");
 
     } else {
         document.getElementById('show-calc-province').style.display = 'none'
@@ -426,12 +443,18 @@ const countryListElOnClick = (e) => {
 
 countryListEl.addEventListener("click", countryListElOnClick);
 provinceListEle.addEventListener("click", provinceListElOnClick);
+
 countryInput.addEventListener("input", (e) => {
     const text = e.target.value;
     filterList(countryList, text, "country-list");
     toggleCountryList()
 });
 
+provinceInput.addEventListener("input", (e) => {
+    const text = e.target.value;
+    filterList(getProvince, text, "province-list");
+    toggleProvinceList()
+});
 /**country end here */
 
 /**currency start here  */
