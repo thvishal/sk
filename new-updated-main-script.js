@@ -211,7 +211,7 @@ const _handleSubmit = async (e) => {
         currencyCode: currencyCd.value,
     }
 
-    const isExpact = countryCd.isExpatApplicable ? document.getElementById('is-expact-no').checked || true : false
+    const isExpact = countryCd.isExpatApplicable ? document.getElementById('is-expact-no').checked || false : false
     let newUrl = baseUrl + `?client=website&countryCode=${objnew.countryCode}&currencyCode=${objnew.currencyCode}&salary=${objnew.salary}&isExpat=${isExpact}`
     // let getProvinceCode = null
     // console.log(countryCd, provinceInput.value, 'countryCd')
