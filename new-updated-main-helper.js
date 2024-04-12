@@ -1,3 +1,4 @@
+// this is use for salary calculator main. url => skuad.io/salary-calculator
 
 
 export const currencyLocalMap = {
@@ -81,6 +82,7 @@ export const filterList = (list = [], text = "", id) => {
 };
 
 export const createTaxList = (data = [], currCode = "") => {
+    // console.log(currCode, 'currCode')
     const innerFrag = document.createElement('div');
     innerFrag.classList.add("inner-breakup")
     const frag = document.createElement("div");
@@ -95,9 +97,10 @@ export const createTaxList = (data = [], currCode = "") => {
         firstLI.innerHTML = dataItem.label;
         const secondLI = document.createElement("li");
         if (secondLI === null) continue;
-        const newTexValue = new Intl.NumberFormat().format(dataItem.value || 0)
+        // console.log(dataItem.value, 'dataItem.value')
+        const newTexValue = currencyFormat({ amount: dataItem.value, currency: currCode || 'USD' })
         //Math.abs(Number(parseFloat(dataItem.value || 0).toFixed(2)))
-        secondLI.innerHTML = `${currCode} ${newTexValue}`;
+        secondLI.innerHTML = newTexValue;
         secondLI.classList.add("ml-auto")
         ul.appendChild(firstLI);
 
@@ -263,7 +266,7 @@ export const createAccordian = (data) => {
 
             const discountFeeLabel = document.createElement("div");
             discountFeeLabel.classList.add('skuad-offer-label')
-            discountFeeLabel.innerText = '✨ Exclusive offer ✨';
+            discountFeeLabel.innerText = 'âœ¨ Exclusive offer âœ¨';
             accordianLeftSide.classList.add('dis-offer-active')
             accordianLeftSide.appendChild(discountFeeLabel)
         }
@@ -283,21 +286,22 @@ export const createAccordian = (data) => {
         }
         const rightSideAccAmt = document.createElement("div");
         rightSideAccAmt.classList.add('right-inner-container')
-        const totalCurrency = document.createElement("p");
-        totalCurrency.classList.add("total-currency");
-        totalCurrency.innerText = item.currency || "USD";
+        // const totalCurrency = document.createElement("p");
+        // totalCurrency.classList.add("total-currency");
+        // totalCurrency.innerText = item.currency || "USD";
         const totalTax = document.createElement("p");
         totalTax.classList.add('right-side-value')
-        totalCurrency.classList.add("total-tax");
-        totalTax.innerText = new Intl.NumberFormat().format(item.value)
+        // totalCurrency.classList.add("total-tax");
+        // totalTax.innerText = new Intl.NumberFormat().format(item.value)
+        totalTax.innerText=currencyFormat({ amount: item.value, currency: item.currency || 'USD' })
 
         if (item.key === "skuadFee" && skuadFeeDiscount) {
             accordianRightSide.classList.add('offer-active')
-            rightSideAccAmt.appendChild(totalCurrency);
+            // rightSideAccAmt.appendChild(totalCurrency);
             rightSideAccAmt.appendChild(totalTax);
             accordianRightSide.appendChild(rightSideAccAmt);
         } else {
-            accordianRightSide.appendChild(totalCurrency);
+            // accordianRightSide.appendChild(totalCurrency);
             accordianRightSide.appendChild(totalTax);
         }
 
@@ -306,12 +310,14 @@ export const createAccordian = (data) => {
             const skuadFeeValueWrapper = document.createElement("div");
             skuadFeeValueWrapper.classList.add('skuad-dis-fee')
             const skuadFeeValue = document.createElement("p");
-            const skuadFeeCurrency = document.createElement("p");
+            // const skuadFeeCurrency = document.createElement("p");
             skuadFeeValue.classList.add('old-skuad-fee')
-            skuadFeeCurrency.innerText = item.currency || "USD";
-            skuadFeeValue.innerText = new Intl.NumberFormat().format(totalOldSkuadFee)
+            // skuadFeeCurrency.innerText = item.currency || "USD";
+            // skuadFeeValue.innerText = new Intl.NumberFormat().format(totalOldSkuadFee)
+            skuadFeeValue.innerText = currencyFormat({ amount: totalOldSkuadFee, currency: item.currency || 'USD' })
+            
 
-            skuadFeeValueWrapper.appendChild(skuadFeeCurrency);
+            // skuadFeeValueWrapper.appendChild(skuadFeeCurrency);
             skuadFeeValueWrapper.appendChild(skuadFeeValue);
             accordianRightSide.appendChild(skuadFeeValueWrapper);
         }
@@ -338,11 +344,11 @@ export const createAccordian = (data) => {
 
 export const createSalaryTemplate = (data) => {
     const frag = document.createDocumentFragment();
-    // console.log(data, 'data')
+
     data.forEach(item => {
         const grossValue = item.data.filter(item => item.visibility)
 
-        // console.log(grossValue, 'grossValue')
+        console.log(item, 'helper item')
         const sectionDiv = document.createElement("div")
         sectionDiv.classList.add("salary-contribution");
 
@@ -361,16 +367,17 @@ export const createSalaryTemplate = (data) => {
         const durationRight = document.createElement("div");
         durationRight.classList.add('d-flex-new')
 
-        const currenyType = document.createElement("p");
-        currenyType.classList.add("currency-type");
-        currenyType.innerText = item.currency || "USD";
+        // const currenyType = document.createElement("p");
+        // currenyType.classList.add("currency-type");
+        // currenyType.innerText = item.currency || "USD";
 
         const durationSalary = document.createElement("p");
         durationSalary.classList.add("duration-salary");
         // durationSalary.innerText = Math.abs(Number(parseFloat(item.grossSalary || 0).toFixed(2)) || 0);
-        durationSalary.innerText = new Intl.NumberFormat().format(item.grossSalary)
+        // durationSalary.innerText = new Intl.NumberFormat().format(item.grossSalary)
+        durationSalary.innerText = currencyFormat({ amount: item.grossSalary, currency: item.currency || 'USD' })
 
-        durationRight.appendChild(currenyType)
+        // durationRight.appendChild(currenyType)
         durationRight.appendChild(durationSalary)
 
         durationSalaryDiv.appendChild(durationRight)
@@ -393,24 +400,23 @@ export const createSalaryTemplate = (data) => {
         const employmentRight = document.createElement("div");
         employmentRight.classList.add("d-flex-new")
 
-        const employmentCurrenyType = document.createElement("p");
-        employmentCurrenyType.classList.add("currency-type");
-        employmentCurrenyType.innerText = item.currency || "USD";
+        // const employmentCurrenyType = document.createElement("p");
+        // employmentCurrenyType.classList.add("currency-type");
+        // employmentCurrenyType.innerText = item.currency || "USD";
 
         const employmentCostSalary = document.createElement("p");
         employmentCostSalary.classList.add("duration-salary");
         // employmentCostSalary.innerText = Math.abs(Number(parseFloat(item.totalEmploymentCost || 0).toFixed(2)) || 0);
-        employmentCostSalary.innerText = new Intl.NumberFormat().format(item.totalEmploymentCost)
-        employmentRight.appendChild(employmentCurrenyType)
+        // employmentCostSalary.innerText = new Intl.NumberFormat().format(item.totalEmploymentCost)
+        employmentCostSalary.innerText = currencyFormat({ amount: item.totalEmploymentCost, currency: item.currency || 'USD' })
+        // employmentRight.appendChild(employmentCurrenyType)
         employmentRight.appendChild(employmentCostSalary)
         employmentCost.appendChild(employmentRight);
 
         if (item?.data?.length) {
             sectionDiv.appendChild(employmentCost)
         }
-
         frag.appendChild(sectionDiv);
-
     })
 
     const mainDiv = document.getElementById("calculation-wrapper");
@@ -421,5 +427,3 @@ export const createSalaryTemplate = (data) => {
     // toggleDscBtn()
 
 }
-
-
