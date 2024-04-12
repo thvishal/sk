@@ -427,3 +427,5 @@ export const createSalaryTemplate = (data) => {
     // toggleDscBtn()
 
 }
+
+
