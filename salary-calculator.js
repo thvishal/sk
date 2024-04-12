@@ -382,7 +382,7 @@ countryInput.addEventListener("blur", (e) => {
 
 const provinceListElOnClick = (e) => {
     e.preventDefault();
-    if ('State is not found' === e.target.innerText) return;
+    if ('Item not found' === e.target.innerText) return;
     if (e.target.nodeName === "UL") return;
     provinceInput.value = e.target.innerText;
     checkDisabledBtn();
@@ -393,7 +393,7 @@ const provinceListElOnClick = (e) => {
 let getProvince = []
 const countryListElOnClick = (e) => {
     e.preventDefault();
-    if ('Country is not found' === e.target.innerText) return;
+    if ('Item not found' === e.target.innerText) return;
     if (e.target.nodeName === "UL") return;
     provinceInput.value = ''
     countryInput.value = e.target.innerText;
@@ -483,7 +483,7 @@ countryInput.addEventListener("keydown", (e) => {
 
     if (keyName === "ArrowDown") {
         const firstChildEle = countryListEl.firstChild;
-        if (firstChildEle.innerText === 'Country is not found') return;
+        if (firstChildEle.innerText === 'Item not found') return;
         if (!activeEl) {
             firstChildEle.classList.add("active");
         } else {
