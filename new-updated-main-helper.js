@@ -263,7 +263,7 @@ export const createAccordian = (data) => {
 
             const discountFeeLabel = document.createElement("div");
             discountFeeLabel.classList.add('skuad-offer-label')
-            discountFeeLabel.innerText = "✨ Exclusive offer ✨";
+            discountFeeLabel.innerText = '✨ Exclusive offer ✨';
             accordianLeftSide.classList.add('dis-offer-active')
             accordianLeftSide.appendChild(discountFeeLabel)
         }
