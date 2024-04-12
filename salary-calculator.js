@@ -8,7 +8,7 @@ import {
     filterList,
     updateMeta,
     commaSeprateVal
-} from "https://cdn.jsdelivr.net/gh/thvishal/sk/new-updated-main-helper.js"
+} from "https://cdn.jsdelivr.net/gh/thvishal/sk/salary-calculator-helper.js"
 // old helper -> https://dl.dropboxusercontent.com/scl/fi/ls6hryquf3ymagqb73lc5/new-updated-main-helper.js?rlkey=cdnhfh3wdljjzpmft1bl7sowv&dl=0
 
 let currencyList = [
