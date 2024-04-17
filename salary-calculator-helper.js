@@ -76,7 +76,7 @@ export const filterList = (list = [], text = "", id) => {
         item.label.toLowerCase().includes(text?.toLowerCase())
     );
     if (!filteredList.length) {
-        filteredList = [{ label: 'Item not found', disabled: true }]
+        filteredList = [{ label: 'Country is not found', disabled: true }]
     }
     createList(filteredList, id);
 };
@@ -266,7 +266,7 @@ export const createAccordian = (data) => {
 
             const discountFeeLabel = document.createElement("div");
             discountFeeLabel.classList.add('skuad-offer-label')
-            discountFeeLabel.innerText = '✨ Exclusive offer ✨';
+            discountFeeLabel.innerText = 'âœ¨ Exclusive offer âœ¨';
             accordianLeftSide.classList.add('dis-offer-active')
             accordianLeftSide.appendChild(discountFeeLabel)
         }
