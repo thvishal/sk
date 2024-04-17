@@ -111,7 +111,6 @@ const _submitHubspotForm = (formData, portalId, formId, callback) => {
       if (data.inlineMessage) {
           $('#hmemail').val($('#hmformemail').val());
           $('#hm-email-form')[0].reset();
-          popupOne = false;
           $('.exit-popup').addClass('visible');
         }
       else if (data.status === 'error' && data.errors[0].errorType === "BLOCKED_EMAIL") {
