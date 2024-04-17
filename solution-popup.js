@@ -337,22 +337,6 @@ const _submitHubspotForm = (formData, portalId, formId, callback) => {
       }
   });
 
-
-
-// for open popup form
-const exitPopupClose = document.getElementById('exitPopup-pdf');
-const openPopBtn = document.getElementById('resp-download-pdf');
-const closePopup = document.getElementById('cross-pattern-close-icon');
-openPopBtn.addEventListener('click', (e)=> {
- e.preventDefault();
-    exitPopupClose.classList.add('visible-popup');
-})
-
-closePopup.addEventListener('click', ()=> {
-console.log('close');
-    exitPopupClose.classList.remove('visible-popup');
-})
-
 $('.cross-pattern').click(function(){
 $('.exit-popup').removeClass('.visible');
 })
