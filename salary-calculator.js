@@ -372,7 +372,6 @@ countryInput.addEventListener("click", toggleCountryList);
 provinceInput.addEventListener("click", toggleProvinceList);
 
 countryInput.addEventListener("blur", (e) => {
-
     const text = e.target.value;
     const isEqual = countryList.find(
         (item) => item.label.toLowerCase() === text.toLowerCase()
@@ -391,6 +390,7 @@ const provinceListElOnClick = (e) => {
 };
 
 let getProvince = []
+
 const countryListElOnClick = (e) => {
     e.preventDefault();
     if ('Item not found' === e.target.innerText) return;
@@ -469,7 +469,7 @@ const toggleCurrencyList = (e) => {
 };
 
 
-/**currency end here */
+/*currency end here */
 
 document.body.addEventListener("click", () => {
     const els = document.querySelectorAll(".list-cotainer");
@@ -509,10 +509,77 @@ countryInput.addEventListener("keydown", (e) => {
         });
     } else if (keyName === "Enter") {
         e.preventDefault();
+
+        const countryProvince = countryList.find(item => item.label === activeEl.innerText)
+        getProvince = countryProvince.provinceList.map(item => ({ label: item.province, value: item.provinceCode }))
+        if (countryProvince.label === 'Canada') {
+            provinceInput.setAttribute('placeholder', 'Province')
+        } else {
+            provinceInput.setAttribute('placeholder', 'State')
+        }
+
+        getProvince.sort((a, b) => {
+            const labelA = a.label.toUpperCase(); // ignore upper and lowercase
+            const labelB = b.label.toUpperCase(); // ignore upper and lowercase
+
+            if (labelA < labelB) {
+                return -1; // labelA comes before labelB
+            }
+            if (labelA > labelB) {
+                return 1; // labelA comes after labelB
+            }
+            return 0; // labels are equal
+        });
+
+        if (countryProvince.provinceList.length) {
+            document.getElementById('show-calc-province').style.display = 'block'
+            createList(getProvince.sort(), "province-list");
+
+        } else {
+            document.getElementById('show-calc-province').style.display = 'none'
+        }
+
         countryInput.value = activeEl.innerText;
         countryListEl.classList.add("list-modal");
     }
 
+});
+
+provinceInput.addEventListener("keydown", (e) => {
+    const keyName = e.key;
+    const activeEl = provinceListEle.querySelector(".active");
+
+    if (keyName === "ArrowDown") {
+        const firstChildEle = provinceListEle.firstChild;
+        if (firstChildEle.innerText === 'Item not found') return;
+        if (!activeEl) {
+            firstChildEle.classList.add("active");
+        } else {
+            const nextEl = activeEl.nextSibling;
+            activeEl.classList.remove("active");
+            nextEl.classList.add("active");
+        }
+
+        activeEl.scrollIntoView({
+            block: "center",
+        });
+    } else if (keyName === "ArrowUp") {
+        const lastChildEle = provinceListEle.lastChild;
+        if (!activeEl) {
+            lastChildEle.classList.add("active");
+        } else {
+            const nextEl = activeEl.previousSibling;
+            activeEl.classList.remove("active");
+            nextEl.classList.add("active");
+        }
+        activeEl.scrollIntoView({
+            block: "center",
+        });
+    } else if (keyName === "Enter") {
+        e.preventDefault();
+        provinceInput.value = activeEl.innerText;
+        provinceListEle.classList.add("list-modal");
+    }
 });
 
 function provideCountryToFormHeader(countryName) {
