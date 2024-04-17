@@ -129,7 +129,7 @@ const _submitHubspotForm = (formData, portalId, formId, callback) => {
     e.preventDefault();
     const data = new FormData(e.target);
     let formData = Object.fromEntries(data.entries());
-    g2emailCheck()
+    emailCheck()
     .then(() => {
     if (hmformValidated) {
       _submitHubspotForm(formData,"8552073", "07bed951-e322-4452-b36c-9ac863499441")
