@@ -278,7 +278,9 @@ const _handleSubmit = async (e) => {
                 comData.currency = currencyCd.value
                 salaryData();
                 showModalHandler();
-                updateMeta(comData.meta || []);
+                let metaDsc = [...comData.meta || [], ...comData.additionalNotes || []]
+                updateMeta(metaDsc || []);
+                
                 document.getElementById("err-msg").style.display = "none";
 
                 //document.getElementById("err-msg").innerHTML = null;
