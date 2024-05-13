@@ -159,7 +159,7 @@ function showRefForm(){
          IPcountryCode = result.country.iso_code;
          countryCodeSelect.value = "+"+result.country.phone_code;
        if (queryParams.code) {
-        refcountryCodeSelect.value = String(queryParams.code);
+        refcountryCodeSelect.value = "+"+String(queryParams.code);
        }
        else{
         refcountryCodeSelect.value = "+"+result.country.phone_code;
