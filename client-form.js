@@ -1,9 +1,10 @@
  // Function to extract query parameters from URL
- function getQueryParams(url) {
+function getQueryParams(url) {
     const queryParams = {};
     const urlParams = new URLSearchParams(url);
     for (const [key, value] of urlParams) {
-        queryParams[key] = value;
+        // Decode URI component to handle special characters like '%2B'
+        queryParams[key] = decodeURIComponent(value);
     }
     return queryParams;
 }
@@ -13,10 +14,8 @@ const queryParams = getQueryParams(window.location.search);
 if (Object.keys(queryParams).length > 0) {
     // Update input values if query parameters exist
     if (queryParams.firstname || queryParams.email || queryParams.lastname || queryParams.phonenumber || queryParams.code) {
-        // Remove hide class from referal-banner-img
+        // If any of these parameters exist, keep the elements hidden
         document.querySelector('.referal-banner-img').classList.add('hide');
-        
-        // Remove hide class from upper-form-wrapper
         document.querySelector('.upper-form-wrapper').classList.add('hide');
     }
 
@@ -33,13 +32,16 @@ if (Object.keys(queryParams).length > 0) {
     if (queryParams.phonenumber) {
         document.getElementById('referee_phone_number').value = queryParams.phonenumber;
     }
+    if (queryParams.code) {
+        // Convert code value to string format
+        document.getElementById('country_code').value = String(queryParams.code);
+    }
 } else {
-    // Remove hide class from referal-banner-img if no query parameters
+    // Remove hide class from referal-banner-img and upper-form-wrapper if no query parameters
     document.querySelector('.referal-banner-img').classList.remove('hide');
-    
-    // Remove hide class from upper-form-wrapper if no query parameters
     document.querySelector('.upper-form-wrapper').classList.remove('hide');
 }
+
 
 function showRefForm(){
     $(".after-susbmit-referral").css('display','none');
@@ -159,7 +161,7 @@ function showRefForm(){
          IPcountryCode = result.country.iso_code;
          countryCodeSelect.value = "+"+result.country.phone_code;
        if (queryParams.code) {
-        refcountryCodeSelect.value = "+"+String(queryParams.code);
+        refcountryCodeSelect.value = "+"+queryParams.code;
        }
        else{
         refcountryCodeSelect.value = "+"+result.country.phone_code;
