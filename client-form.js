@@ -1,3 +1,46 @@
+ // Function to extract query parameters from URL
+ function getQueryParams(url) {
+    const queryParams = {};
+    const urlParams = new URLSearchParams(url);
+    for (const [key, value] of urlParams) {
+        queryParams[key] = value;
+    }
+    return queryParams;
+}
+
+// Check if there are query parameters in the URL
+const queryParams = getQueryParams(window.location.search);
+if (Object.keys(queryParams).length > 0) {
+    // Update input values if query parameters exist
+    if (queryParams.firstname || queryParams.email || queryParams.lastname || queryParams.phonenumber || queryParams.code) {
+        // Remove hide class from referal-banner-img
+        document.querySelector('.referal-banner-img').classList.add('hide');
+        
+        // Remove hide class from upper-form-wrapper
+        document.querySelector('.upper-form-wrapper').classList.add('hide');
+    }
+
+    // Update input values based on query parameters
+    if (queryParams.firstname) {
+        document.getElementById('referee_name').value = queryParams.firstname;
+    }
+    if (queryParams.email) {
+        document.getElementById('referee_email_id').value = queryParams.email;
+    }
+    if (queryParams.lastname) {
+        document.getElementById('referee_last_name').value = queryParams.lastname;
+    }
+    if (queryParams.phonenumber) {
+        document.getElementById('referee_phone_number').value = queryParams.phonenumber;
+    }
+} else {
+    // Remove hide class from referal-banner-img if no query parameters
+    document.querySelector('.referal-banner-img').classList.remove('hide');
+    
+    // Remove hide class from upper-form-wrapper if no query parameters
+    document.querySelector('.upper-form-wrapper').classList.remove('hide');
+}
+
 function showRefForm(){
     $(".after-susbmit-referral").css('display','none');
    $(".request-demo-form-wrapper-new").css('display','block');
@@ -115,9 +158,11 @@ function showRefForm(){
         console.log(result.country,'result.country');
          IPcountryCode = result.country.iso_code;
          countryCodeSelect.value = "+"+result.country.phone_code;
-       refcountryCodeSelect.value = "+"+result.country.phone_code;
        if (queryParams.code) {
         refcountryCodeSelect.value = String(queryParams.code);
+       }
+       else{
+        refcountryCodeSelect.value = "+"+result.country.phone_code;
        }
      }
    })
