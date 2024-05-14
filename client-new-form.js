@@ -137,29 +137,7 @@ function showRefForm(){
          let x = `${res.countryList[j].label} (${res.countryList[j].dial_code})`;
          refcountryCodeSelect.options[refcountryCodeSelect.options.length] = new Option(x, res.countryList[j].dial_code);
        }
-
-
-       if (queryParams.code) {
-        const refcountryCodeSelect = document.getElementById("ref-phone-code");
-        const codeValue = "+" + queryParams.code.replace(/\s/g, ''); // Remove spaces from code value
-        // Check if the codeValue exists in the select list
-        if ([...refcountryCodeSelect.options].some(option => option.value.replace(/\s/g, '') === codeValue)) {
-            // Loop through options to find the one with the matching value
-            for (const option of refcountryCodeSelect.options) {
-                if (option.value.replace(/\s/g, '') === codeValue) {
-                    // Set the selected option
-                    option.selected = true;
-                    break; // Exit loop once selected option is found
-                }
-            }
-        } else {
-            // If codeValue doesn't exist in the select list, set default value like "+1"
-            refcountryCodeSelect.value = "+1";
-        }
-    } else {
-        // If queryParams.code doesn't exist, set default value like "+1"
-        refcountryCodeSelect.value = "+1";
-    }
+    refcountryCodeSelect.value = "+1";
      }
    });
    
