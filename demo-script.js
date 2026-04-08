@@ -1,1 +1,316 @@
-let debug=!1;debug||(console.log=function(){});let countries=[];function dynamicSort(e){let t=1;return"-"===e[0]&&(t=-1,e=e.substr(1)),(o,n)=>-1===t?n[e].localeCompare(o[e]):o[e].localeCompare(n[e])}document.querySelectorAll('input[type="tel"]').forEach((e=>{e.addEventListener("input",(()=>{e.value=e.value.replace(/[^0-9]/g,"")}))}));const emailElement=document.getElementById("email");function showEmailError(e){const t=document.getElementById("email-error");return!!t&&(e?(t.style.display="block",t.innerText=e,!1):(t.style.display="none",!0))}async function validateWithCodeJudge(e){const t=new AbortController,o=setTimeout((()=>t.abort()),5e3),n=await fetch(`https://work.codejudge.io/api/validate-email/?email=${encodeURIComponent(e)}&corp_email_only=True`,{method:"PUT",headers:{"Content-Type":"application/json"},signal:t.signal});if(clearTimeout(o),!n.ok)throw new Error("CodeJudge failed");const a=await n.json();return a.email_valid&&a.corporate_email_valid?showEmailError(""):showEmailError("Please enter a valid company or business email address.")}async function validateWithHubSpot(e){const t=await fetch("https://forms.hsforms.com/emailcheck/v1/json-ext?portalId=8552073&includeFreemailSuggestions=false",{method:"POST",body:e});if(!t.ok)throw new Error("HubSpot failed");return(await t.json()).emailFree?showEmailError("Please enter a valid company or business email address."):showEmailError("")}async function checkEmailValidity(e){try{return await validateWithCodeJudge(e)}catch{try{return await validateWithHubSpot(e)}catch{return showEmailError("An error occurred. Please try again.")}}}function setDefaultSelectOption(e,t){const o=document.getElementById(e);if(!o)return;const n=new Option(t,"");n.disabled=!0,n.selected=!0,o.options[0]=n}localStorage.getItem("resEmail")&&emailElement&&(emailElement.value=localStorage.getItem("resEmail")),emailElement.addEventListener("blur",(e=>{checkEmailValidity(e.target.value)})),setDefaultSelectOption("number_of_remote_hires","Number of hires"),setDefaultSelectOption("how_can_we_help_you_new-input","How can we help you?"),setDefaultSelectOption("company_size","Company size");const countryCodeSelect=document.getElementById("phone-code-dropdown"),countryInput=document.querySelector('input[name="country"]'),countryName=document.getElementById("countries_you_want_to_enroll"),loader=document.querySelector(".country-loading"),setCountryCodeOptions=e=>{countryCodeSelect.options.length=0;const t=new Option("Select Country Code","");t.disabled=!0,t.selected=!0,countryCodeSelect.add(t),e.forEach((e=>{const t=new Option(`${e.label} (${e.dial_code})`,e.dial_code);t.dataset.value=e.value,t.dataset.label=e.label,countryCodeSelect.add(t)}))},fetchCountryList=async()=>{const e=document.querySelector(".country-loading");try{const e=await fetch("https://storage.googleapis.com/skuad-public-assets/country-list.json"),t=await e.json();countries=t.countryList,setCountryCodeOptions(countries);const o=[...countries].sort(dynamicSort("label"));o.push({label:"Others",value:"Others"}),countryName&&(countryName.innerHTML=o.map((e=>`<option value="${e.label}">${e.label}</option>`)).join(""),"function"==typeof countryName.loadOptions&&countryName.loadOptions())}catch(t){console.error("Error fetching country list:",t),e&&(e.style.display="none")}},applyGeoFromStorage=()=>{try{const e=JSON.parse(localStorage.getItem("device_geodata")),t=e?.data;if(!t)return!1;const o=countries.find((e=>e.value?.toLowerCase()===t.iso_code?.toLowerCase()));return!!o&&(countryCodeSelect.value=o.dial_code,countryInput&&(countryInput.value=o.label),!0)}catch(e){return console.error("Error reading geo:",e),!1}};countryCodeSelect.addEventListener("change",(()=>{const e=countryCodeSelect.selectedOptions[0];countryInput&&(countryInput.value=e?.dataset.label||"")}));const hideCountryLoader=()=>{const e=document.querySelector(".country-loading");e&&(e.style.display="none")},initForm=async()=>{await fetchCountryList();let e=applyGeoFromStorage();!e&&window.getGeoData&&(await window.getGeoData(),e=applyGeoFromStorage()),hideCountryLoader()};initForm(),window.addEventListener("geoReady",(()=>{applyGeoFromStorage()&&hideCountryLoader()}));const _submitHubspotForm=(e,t,o,n)=>{const a=document.getElementById("request_demo_submit-btn");a.value="Please wait...",a.disabled=!0,delete e["phone-code"],delete e.ld_field,"Other"===$("#how_can_we_help_you_new-input").val()&&delete e.how_can_we_help_you_new;const r={submittedAt:Date.now(),fields:Object.keys(e).map((t=>({objectTypeId:"0-1",name:t,value:e[t]}))),context:{hutk:getCookie("hubspotutk"),pageUri:window.location.href,pageName:document.title}};fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${o}/${n}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)}).then((e=>e.json())).then((o=>{if(a.value="Submit",a.disabled=!1,o.inlineMessage)return localStorage.setItem("skuadSignupFormData",JSON.stringify({...e,countryCode:t})),void("function"==typeof klentyFormSubmit?klentyFormSubmit("request-demo-api-form"):window.location.href="/book-a-meeting");if("error"===o.status&&["BLOCKED_EMAIL","INVALID_EMAIL"].includes(o.errors?.[0]?.errorType)&&showEmailError("Please enter a valid company or business email address."),"error"===o.status&&"NUMBER_OUT_OF_RANGE"===o.errors?.[0]?.errorType){const e=document.getElementById("phone-error");e&&(e.style.display="block",e.innerText="Please enter valid phone number")}})).catch((()=>{a.value="Submit",a.disabled=!1}))},form=document.getElementById("request-demo-api-form");form.addEventListener("submit",(async e=>{e.preventDefault();const t=Object.fromEntries(new FormData(form).entries()),o=countryCodeSelect.selectedOptions[0];let n=o?.dataset.value;if(!n){const e=JSON.parse(localStorage.getItem("device_geodata"));n=e?.data?.iso_code?.toUpperCase()||""}n||(console.warn("Country not available"),n=""),console.log("Final country:",n),t.phone=t["phone-code"]+t.phone;await checkEmailValidity(t.email)&&_submitHubspotForm(t,n,"8552073","2b4e05d0-d685-4929-b37c-f961d7db9de5")}));
+/**
+ * ============================================================================
+ * FORM LOGIC (FINAL OPTIMIZED - NON BLOCKING + SEO SAFE)
+ * ============================================================================
+ */
+
+let debug = true;
+if (!debug) console.log = function () { };
+
+let countries = [];
+
+/* ============================================================================
+ * 1. UTILS
+ * ========================================================================== */
+
+function dynamicSort(key) {
+    let order = 1;
+    if (key[0] === "-") {
+        order = -1;
+        key = key.substr(1);
+    }
+    return (a, b) =>
+        order === -1
+            ? b[key].localeCompare(a[key])
+            : a[key].localeCompare(b[key]);
+}
+
+/* ============================================================================
+ * 2. DOM CACHE
+ * ========================================================================== */
+
+const emailElement = document.getElementById("email");
+const countryCodeSelect = document.getElementById("phone-code-dropdown");
+const countryInput = document.querySelector('input[name="country"]');
+const countryName = document.getElementById("countries_you_want_to_enroll");
+const loader = document.querySelector(".country-loading");
+const form = document.getElementById("request-demo-api-form");
+
+/* ============================================================================
+ * 3. PHONE INPUT SANITIZE
+ * ========================================================================== */
+
+document.querySelectorAll('input[type="tel"]').forEach((input) => {
+    input.addEventListener("input", () => {
+        input.value = input.value.replace(/[^0-9]/g, "");
+    });
+});
+
+/* ============================================================================
+ * 4. EMAIL VALIDATION
+ * ========================================================================== */
+
+function showEmailError(message) {
+    const el = document.getElementById("email-error");
+    if (!el) return false;
+
+    if (message) {
+        el.style.display = "block";
+        el.innerText = message;
+        return false;
+    }
+    el.style.display = "none";
+    return true;
+}
+
+async function validateWithCodeJudge(email) {
+    const res = await fetchWithTimeout(
+        `https://work.codejudge.io/api/validate-email/?email=${encodeURIComponent(email)}&corp_email_only=True`,
+        {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+        }
+    );
+
+    const data = await res.json();
+
+    return data.email_valid && data.corporate_email_valid
+        ? showEmailError("")
+        : showEmailError("Please enter a valid company email.");
+}
+
+async function validateWithHubSpot(email) {
+    const res = await fetchWithTimeout(
+        "https://forms.hsforms.com/emailcheck/v1/json-ext?portalId=8552073&includeFreemailSuggestions=false",
+        {
+            method: "POST",
+            body: email,
+        }
+    );
+
+    const data = await res.json();
+
+    return data.emailFree
+        ? showEmailError("Please enter a valid company email.")
+        : showEmailError("");
+}
+
+async function checkEmailValidity(email) {
+    try {
+        return await validateWithCodeJudge(email);
+    } catch {
+        try {
+            return await validateWithHubSpot(email);
+        } catch {
+            return showEmailError("Validation failed. Try again.");
+        }
+    }
+}
+
+/* ============================================================================
+ * 5. SELECT DEFAULTS
+ * ========================================================================== */
+
+function setDefaultSelectOption(id, label) {
+    const select = document.getElementById(id);
+    if (!select) return;
+
+    const option = new Option(label, "");
+    option.disabled = true;
+    option.selected = true;
+    select.options[0] = option;
+}
+
+/* ============================================================================
+ * 6. COUNTRY SETUP
+ * ========================================================================== */
+
+function setCountryCodeOptions(list) {
+    countryCodeSelect.options.length = 0;
+
+    const defaultOption = new Option("Select Country Code", "");
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    countryCodeSelect.add(defaultOption);
+
+    list.forEach((c) => {
+        const option = new Option(`${c.label} (${c.dial_code})`, c.dial_code);
+        option.dataset.value = c.value;
+        option.dataset.label = c.label;
+        countryCodeSelect.add(option);
+    });
+}
+
+function applyGeo(geo) {
+    if (!geo || !countries.length) return false;
+
+    const selected = countries.find(
+        (c) => c.value?.toLowerCase() === geo.iso_code?.toLowerCase()
+    );
+
+    if (!selected) return false;
+
+    countryCodeSelect.value = selected.dial_code;
+
+    if (countryInput) {
+        countryInput.value = selected.label;
+    }
+
+    return true;
+}
+
+countryCodeSelect.addEventListener("change", () => {
+    const selected = countryCodeSelect.selectedOptions[0];
+    if (countryInput) {
+        countryInput.value = selected?.dataset.label || "";
+    }
+});
+
+/* ============================================================================
+ * 7. INIT (ðŸ”¥ FIXED)
+ * ========================================================================== */
+
+async function initForm() {
+    try {
+        // ðŸš€ PARALLEL (no chaining)
+        const [countriesData, geo] = await Promise.all([
+            window.getCountryList(),
+            window.getGeoData()
+        ]);
+
+        countries = countriesData;
+        setCountryCodeOptions(countries);
+
+        const sorted = [...countries].sort(dynamicSort("label"));
+        sorted.push({ label: "Others", value: "Others" });
+
+        if (countryName) {
+            countryName.innerHTML = sorted
+                .map((c) => `<option value="${c.label}">${c.label}</option>`)
+                .join("");
+
+            if (typeof countryName.loadOptions === "function") {
+                countryName.loadOptions();
+            }
+        }
+
+        applyGeo(geo);
+
+    } catch (err) {
+        console.error("Init failed:", err);
+    } finally {
+        if (loader) loader.style.display = "none";
+    }
+}
+
+/* ðŸš€ NON-BLOCKING INIT */
+if (form) {
+    setTimeout(initForm, 0);
+}
+
+/* ============================================================================
+ * 8. INITIAL VALUES
+ * ========================================================================== */
+
+if (localStorage.getItem("resEmail") && emailElement) {
+    emailElement.value = localStorage.getItem("resEmail");
+}
+
+emailElement?.addEventListener("blur", (e) => {
+    checkEmailValidity(e.target.value);
+});
+
+setDefaultSelectOption("number_of_remote_hires", "Number of hires");
+setDefaultSelectOption("how_can_we_help_you_new-input", "How can we help?");
+setDefaultSelectOption("company_size", "Company size");
+
+/* ============================================================================
+ * 9. FORM SUBMIT
+ * ========================================================================== */
+
+function _submitHubspotForm(data, countryCode, portalId, formId) {
+    const btn = document.getElementById("request_demo_submit-btn");
+
+    btn.value = "Please wait...";
+    btn.disabled = true;
+
+    delete data["phone-code"];
+    delete data.ld_field;
+
+    const payload = {
+        submittedAt: Date.now(),
+        fields: Object.keys(data).map((key) => ({
+            objectTypeId: "0-1",
+            name: key,
+            value: data[key],
+        })),
+        context: {
+            hutk: getCookie("hubspotutk"),
+            pageUri: window.location.href,
+            pageName: document.title,
+        },
+    };
+
+    fetchWithTimeout(
+        `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        }
+    )
+        .then((r) => r.json())
+        .then((res) => {
+            btn.value = "Submit";
+            btn.disabled = false;
+
+            if (res.inlineMessage) {
+                localStorage.setItem(
+                    "skuadSignupFormData",
+                    JSON.stringify({ ...data, countryCode })
+                );
+
+                if (typeof klentyFormSubmit === "function") {
+                    klentyFormSubmit("request-demo-api-form");
+                } else {
+                    window.location.href = "/book-a-meeting";
+                }
+                return;
+            }
+
+            if (res.errors?.[0]?.errorType === "INVALID_EMAIL") {
+                showEmailError("Invalid email.");
+            }
+        })
+        .catch(() => {
+            btn.value = "Submit";
+            btn.disabled = false;
+        });
+}
+
+form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    const selected = countryCodeSelect.selectedOptions[0];
+
+    let country = selected?.dataset.value;
+
+    if (!country) {
+        const geo = await window.getGeoData();
+        country = geo?.iso_code?.toUpperCase() || "";
+    }
+
+    data.phone = data["phone-code"] + data.phone;
+
+    const valid = await checkEmailValidity(data.email);
+    if (!valid) return;
+
+    _submitHubspotForm(
+        data,
+        country,
+        "8552073",
+        "2b4e05d0-d685-4929-b37c-f961d7db9de5"
+    );
+});
